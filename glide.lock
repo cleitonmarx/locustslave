@@ -1,0 +1,22 @@
+hash: 950dfb2fc47792337d3ed591dcab5d9bfdd6a0c48d0c1c40c90d498ab2571185
+updated: 2017-01-16T13:37:30.332113828-08:00
+imports:
+- name: github.com/asaskevich/EventBus
+  version: ab9e5ceb2cc1ca6f36a5813c928c534e837681c2
+- name: github.com/davecgh/go-spew
+  version: 04cdfd42973bb9c8589fd6a731800cf222fde1a9
+  subpackages:
+  - spew
+- name: github.com/ernesto-jimenez/httplogger
+  version: 86cc44f6150a7e9dca8586e425a9c73e71f8ae7d
+- name: github.com/Jeffail/gabs
+  version: 2a3aa15961d5fee6047b8151b67ac2f08ba2c48c
+- name: github.com/myzhan/boomer
+  version: 423db40a563b67aaaedaf404717b3c7659d22b75
+- name: github.com/ugorji/go
+  version: 9c7f9b7a2bc3a520f7c7b30b34b7f85f47fe27b6
+  subpackages:
+  - codec
+- name: github.com/zeromq/goczmq
+  version: faef36c9feea28111fd413ea29ea99d80ef54e7b
+testImports: []

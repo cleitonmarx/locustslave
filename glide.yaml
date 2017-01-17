@@ -1,0 +1,6 @@
+package: .
+import:
+- package: github.com/myzhan/boomer
+- package: github.com/Jeffail/gabs
+  version: "1.0"
+- package: github.com/ernesto-jimenez/httplogger
