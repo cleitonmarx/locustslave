@@ -8,6 +8,7 @@ _obj
 _test
 vendor
 bin
+.glide
 
 # Architecture specific extensions/prefixes
 *.[568vq]

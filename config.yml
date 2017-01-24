@@ -1,0 +1,4 @@
+params:
+    masterHost: http://127.0.0.1:8888 
+    eventID: 74448
+    ticketPriceID: 71362
