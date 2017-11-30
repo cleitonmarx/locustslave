@@ -31,6 +31,8 @@ func main() {
 			task.Fn = creationCheckout
 		case "ticketPrice":
 			task.Fn = ticketPrice
+		case "country":
+			task.Fn = country
 
 		}
 		boomer.Run(task)
@@ -56,7 +58,7 @@ func completeCheckout() {
 	// 	DisableKeepAlives: true,
 	// }, NewLogger())}
 	tracer := &infrastructure.LocustTracer{}
-	httpClient := &http.Client{Transport: &http.Transport{DisableKeepAlives: true}, Timeout: 15 * time.Second}
+	httpClient := &http.Client{Timeout: 120 * time.Second}
 	ckService := services.NewCheckoutService(apiHost, httpClient, tracer)
 	evService := services.NewEventService(apiHost, httpClient, tracer)
 	stService := services.NewStripeService(stripeKey)
@@ -130,9 +132,29 @@ func ticketPrice() {
 	}
 }
 
+func country() {
+	var (
+		err error
+	)
+
+	apiHost := parameters["api_host"].(string)
+
+	tracer := &infrastructure.LocustTracer{}
+	httpClient := &http.Client{Transport: &http.Transport{DisableKeepAlives: true}, Timeout: 15 * time.Second}
+	evService := services.NewEventService(apiHost, httpClient, tracer)
+
+	_, err = evService.GetCountry()
+	if err != nil {
+		time.Sleep(5 * time.Second)
+	}
+}
+
 func buildParameters() {
 
-	masterHost := flag.String("api_host", "127.0.0.1", "Host or IP address of Go-API server. Defaults to 127.0.0.1.")
+	//masterHost := flag.String("master-host", "127.0.0.1", "Host or IP address of locust master for distributed load testing. Defaults to 127.0.0.1.")
+	//masterPort := flag.Int("master-port", 5557, "The port to connect to that is used by the locust master for distributed load testing. Defaults to 5557.")
+
+	apiHost := flag.String("api_host", "127.0.0.1", "Host or IP address of Go-API server. Defaults to 127.0.0.1.")
 	eventID := flag.Int64("event_id", 0, "Event id")
 	ticketPriceID := flag.Int64("ticket_price_id", 0, "Host or IP address of Go-API server. Defaults to 127.0.0.1.")
 	stripeKey := flag.String("stripeKey", "", "")
@@ -150,11 +172,13 @@ func buildParameters() {
 	}
 
 	parameters = map[string]interface{}{}
-	parameters["api_host"] = *masterHost
+	parameters["api_host"] = *apiHost
 	parameters["event_id"] = *eventID
 	parameters["ticket_price_id"] = *ticketPriceID
 	parameters["mode"] = *mode
 	parameters["task"] = *task
 	parameters["stripeKey"] = *stripeKey
+	// parameters["master_host"] = *masterHost
+	// parameters["master_port"] = *masterPort
 
 }
