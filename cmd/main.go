@@ -54,9 +54,6 @@ func completeCheckout() {
 	ticketPriceID := parameters["ticket_price_id"].(int64)
 	stripeKey := parameters["stripeKey"].(string)
 
-	// httpClient := &http.Client{Transport: httplogger.NewLoggedTransport(&http.Transport{
-	// 	DisableKeepAlives: true,
-	// }, NewLogger())}
 	tracer := &infrastructure.LocustTracer{}
 	httpClient := &http.Client{Timeout: 120 * time.Second}
 	ckService := services.NewCheckoutService(apiHost, httpClient, tracer)
