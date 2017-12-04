@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"flag"
+	"math/rand"
 	"net/http"
 	"time"
 
@@ -61,16 +62,18 @@ func completeCheckout() {
 	stService := services.NewStripeService(stripeKey)
 
 	if _, err = evService.GetEvent(eventID); err == nil {
+		RdnSleep(600, 3000, time.Millisecond)
 		if _, err = evService.GetTicketPrice(eventID); err == nil {
+			RdnSleep(600, 3000, time.Millisecond)
 			if respBuffer, err = ckService.Create(eventID, ticketPriceID); err == nil {
 				jsonContainer, _ := gabs.ParseJSON(respBuffer.Bytes())
 				checkoutID := jsonContainer.Path("data.id").Data().(string)
-				//time.Sleep(1 * time.Second)
+				RdnSleep(600, 3000, time.Millisecond)
 				if respBuffer, err = ckService.Patch(checkoutID, respBuffer); err == nil {
-					//time.Sleep(1 * time.Second)
+					RdnSleep(600, 3000, time.Millisecond)
 					jsonContainer, _ = gabs.ParseJSON(respBuffer.Bytes())
 					total, _ := strconv.ParseFloat(jsonContainer.Path("data.attributes.order_summary.total").Data().(string), 32)
-					//fmt.Println("Total:", total)
+					RdnSleep(600, 3000, time.Millisecond)
 					if total > 0 {
 						if tokenId, err = stService.GetTokenID("4242424242424242"); err == nil {
 							_, err = ckService.Pay(checkoutID, tokenId, respBuffer)
@@ -80,14 +83,14 @@ func completeCheckout() {
 					}
 					if err == nil {
 						ckService.Confirm(checkoutID)
-						//time.Sleep(1 * time.Second)
 					}
 				}
 			}
 		}
 	}
 	if err != nil {
-		time.Sleep(5 * time.Second)
+		RdnSleep(4000, 5000, time.Millisecond)
+		fmt.Println("Error completeCheckout:", err)
 	}
 }
 
@@ -178,4 +181,9 @@ func buildParameters() {
 	// parameters["master_host"] = *masterHost
 	// parameters["master_port"] = *masterPort
 
+}
+
+func RdnSleep(min, max int, unit time.Duration) time.Duration {
+	rand.Seed(time.Now().UnixNano())
+	return time.Duration(rand.Intn(int(max-min))) * unit
 }

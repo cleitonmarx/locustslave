@@ -93,7 +93,7 @@ func (s *CheckoutService) Pay(checkoutID, cardTokenID string, bodyBuffer *bytes.
 	span.SetLabel("endpoint", "v2/checkout/payment")
 
 	jsonContainer, _ := gabs.ParseJSON(bodyBuffer.Bytes())
-	jsonContainer.SetP(cardTokenID, "data.attributes.payment.source.stripe_card_token")
+	jsonContainer.SetP(cardTokenID, "data.attributes.payment.source.card_token")
 
 	requestBody := bytes.NewBufferString(jsonContainer.String())
 
