@@ -3,13 +3,11 @@ package main
 import (
 	"bytes"
 	"flag"
+	"fmt"
 	"math/rand"
 	"net/http"
-	"time"
-
 	"strconv"
-
-	"fmt"
+	"time"
 
 	"github.com/Jeffail/gabs"
 	"github.com/cleitonmarx/locustslave/infrastructure"
@@ -47,7 +45,7 @@ func completeCheckout() {
 	var (
 		err        error
 		respBuffer *bytes.Buffer
-		tokenId    string
+		tokenID    string
 	)
 
 	apiHost := parameters["api_host"].(string)
@@ -62,34 +60,46 @@ func completeCheckout() {
 	stService := services.NewStripeService(stripeKey)
 
 	if _, err = evService.GetEvent(eventID); err == nil {
-		RdnSleep(600, 3000, time.Millisecond)
+		//RdnSleep(600, 3000, time.Millisecond)
 		if _, err = evService.GetTicketPrice(eventID); err == nil {
-			RdnSleep(600, 3000, time.Millisecond)
+			//RdnSleep(600, 3000, time.Millisecond)
 			if respBuffer, err = ckService.Create(eventID, ticketPriceID); err == nil {
 				jsonContainer, _ := gabs.ParseJSON(respBuffer.Bytes())
 				checkoutID := jsonContainer.Path("data.id").Data().(string)
-				RdnSleep(600, 3000, time.Millisecond)
-				if respBuffer, err = ckService.Patch(checkoutID, respBuffer); err == nil {
-					RdnSleep(600, 3000, time.Millisecond)
-					jsonContainer, _ = gabs.ParseJSON(respBuffer.Bytes())
-					total, _ := strconv.ParseFloat(jsonContainer.Path("data.attributes.order_summary.total").Data().(string), 32)
-					RdnSleep(600, 3000, time.Millisecond)
-					if total > 0 {
-						if tokenId, err = stService.GetTokenID("4242424242424242"); err == nil {
-							_, err = ckService.Pay(checkoutID, tokenId, respBuffer)
-						} else {
-							fmt.Println("Error stripe:", err)
-						}
+				total, _ := strconv.ParseFloat(jsonContainer.Path("data.attributes.order_summary.total").Data().(string), 32)
+				if total > 0 {
+					if tokenID, err = stService.GetTokenID("4242424242424242"); err == nil {
+						_, err = ckService.Pay(checkoutID, tokenID, respBuffer)
+					} else {
+						fmt.Println("Error stripe:", err)
 					}
-					if err == nil {
-						ckService.Confirm(checkoutID)
+				} else {
+					if _, err := ckService.Confirm(checkoutID, respBuffer); err != nil {
+						fmt.Println("Error Confirm:", err)
 					}
 				}
+				// //RdnSleep(600, 3000, time.Millisecond)
+				// if respBuffer, err = ckService.Patch(checkoutID, respBuffer); err == nil {
+				// 	//RdnSleep(600, 3000, time.Millisecond)
+				// 	jsonContainer, _ = gabs.ParseJSON(respBuffer.Bytes())
+
+				// 	//RdnSleep(600, 3000, time.Millisecond)
+				// 	if total > 0 {
+				// 		if tokenID, err = stService.GetTokenID("4242424242424242"); err == nil {
+				// 			_, err = ckService.Pay(checkoutID, tokenID, respBuffer)
+				// 		} else {
+				// 			fmt.Println("Error stripe:", err)
+				// 		}
+				// 	}
+				// 	if err == nil {
+				// 		ckService.Confirm(checkoutID)
+				// 	}
+				// }
 			}
 		}
 	}
 	if err != nil {
-		RdnSleep(4000, 5000, time.Millisecond)
+		//RdnSleep(4000, 5000, time.Millisecond)
 		fmt.Println("Error completeCheckout:", err)
 	}
 }

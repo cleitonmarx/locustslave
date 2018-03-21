@@ -23,11 +23,12 @@
 
 [[constraint]]
   name = "github.com/Jeffail/gabs"
-  version = "1.0.0"
+  version = "^1.0.0"
 
 [[constraint]]
   name = "github.com/myzhan/boomer"
+  revision = "0eb0ca6a9116b6a8102c0c210480a6fab2eb76dd"
 
 [[constraint]]
   name = "github.com/stripe/stripe-go"
-  version = "19.1.0"
+  version = "^19.1.0"

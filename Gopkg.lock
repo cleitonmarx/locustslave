@@ -14,14 +14,50 @@
   revision = "9223ecd796146991d8ffc3b822d5aa02f15aee97"
 
 [[projects]]
-  branch = "master"
   name = "github.com/myzhan/boomer"
-  packages = [".","gomq","gomq/zmtp"]
-  revision = "8672afdb6aa16758af90068628929ef7edc2a86f"
+  packages = ["."]
+  revision = "0eb0ca6a9116b6a8102c0c210480a6fab2eb76dd"
 
 [[projects]]
   name = "github.com/stripe/stripe-go"
-  packages = [".","account","balance","bankaccount","bitcoinreceiver","bitcointransaction","card","charge","client","countryspec","coupon","customer","discount","dispute","event","fee","feerefund","fileupload","invoice","invoiceitem","order","orderitem","orderreturn","paymentsource","payout","plan","product","recipient","refund","reversal","sku","source","sub","subitem","token","transfer"]
+  packages = [
+    ".",
+    "account",
+    "balance",
+    "bankaccount",
+    "bitcoinreceiver",
+    "bitcointransaction",
+    "card",
+    "charge",
+    "client",
+    "countryspec",
+    "coupon",
+    "customer",
+    "discount",
+    "dispute",
+    "event",
+    "fee",
+    "feerefund",
+    "fileupload",
+    "invoice",
+    "invoiceitem",
+    "order",
+    "orderitem",
+    "orderreturn",
+    "paymentsource",
+    "payout",
+    "plan",
+    "product",
+    "recipient",
+    "refund",
+    "reversal",
+    "sku",
+    "source",
+    "sub",
+    "subitem",
+    "token",
+    "transfer"
+  ]
   revision = "b4624161e25b0d4d6b153f13bf5f9090cf3ec4b8"
   version = "v19.17.0"
 
@@ -37,9 +73,18 @@
   revision = "98ab09146269d98bc3e427046f5fc222c4134e0b"
   version = "v4.1.0"
 
+[[projects]]
+  branch = "master"
+  name = "github.com/zeromq/gomq"
+  packages = [
+    ".",
+    "zmtp"
+  ]
+  revision = "1b596b5e4f3226e18f7dabfeaa7bfb4d1f3d0fd1"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "c9333a575ed1b14210c8b04023bac1e206ad98a5efe5d0dd16f99671add0aebc"
+  inputs-digest = "501668e888ab9ad6cf9d7d3289047be2687f3a999caf6ceb607953bdad3e753f"
   solver-name = "gps-cdcl"
   solver-version = 1

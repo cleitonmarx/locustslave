@@ -61,12 +61,7 @@ func (s *CheckoutService) Patch(checkoutID string, createResponse *bytes.Buffer)
 	span.SetLabel("endpoint", "v2/checkout")
 
 	jsonContainer, _ := gabs.ParseJSON(createResponse.Bytes())
-	jsonContainer.SetP("Addison", "data.attributes.invoice.first_name")
-	jsonContainer.SetP("White", "data.attributes.invoice.last_name")
-	jsonContainer.SetP("sofiawilson@test.com", "data.attributes.invoice.email")
-	jsonContainer.Path("data.attributes.tickets").Index(0).Set("Addison", "first_name")
-	jsonContainer.Path("data.attributes.tickets").Index(0).Set("White", "last_name")
-	jsonContainer.Path("data.attributes.tickets").Index(0).Set("sofiawilson@test.com", "email")
+	s.setPatchData(jsonContainer)
 
 	requestBody := bytes.NewBufferString(jsonContainer.String())
 
@@ -86,14 +81,25 @@ func (s *CheckoutService) Patch(checkoutID string, createResponse *bytes.Buffer)
 	return respBody, nil
 }
 
-func (s *CheckoutService) Pay(checkoutID, cardTokenID string, bodyBuffer *bytes.Buffer) (*bytes.Buffer, error) {
+func (s *CheckoutService) setPatchData(c *gabs.Container) {
+	c.SetP("Addison", "data.attributes.invoice.first_name")
+	c.SetP("White", "data.attributes.invoice.last_name")
+	c.SetP("sofiawilson@test.com", "data.attributes.invoice.email")
+	c.Path("data.attributes.tickets").Index(0).Set("Addison", "first_name")
+	c.Path("data.attributes.tickets").Index(0).Set("White", "last_name")
+	c.Path("data.attributes.tickets").Index(0).Set("sofiawilson@test.com", "email")
+}
+
+func (s *CheckoutService) Pay(checkoutID, cardTokenID string, createResponse *bytes.Buffer) (*bytes.Buffer, error) {
 	span := s.tracer.NewSpan()
 	defer span.Finish()
 	span.SetLabel("method", "POST")
 	span.SetLabel("endpoint", "v2/checkout/payment")
 
-	jsonContainer, _ := gabs.ParseJSON(bodyBuffer.Bytes())
+	jsonContainer, _ := gabs.ParseJSON(createResponse.Bytes())
+	s.setPatchData(jsonContainer)
 	jsonContainer.SetP(cardTokenID, "data.attributes.payment.source.card_token")
+	jsonContainer.SetP(true, "data.attributes.payment.confirm")
 
 	requestBody := bytes.NewBufferString(jsonContainer.String())
 
@@ -114,13 +120,16 @@ func (s *CheckoutService) Pay(checkoutID, cardTokenID string, bodyBuffer *bytes.
 
 }
 
-func (s *CheckoutService) Confirm(checkoutID string) (*bytes.Buffer, error) {
+func (s *CheckoutService) Confirm(checkoutID string, createResponse *bytes.Buffer) (*bytes.Buffer, error) {
 	span := s.tracer.NewSpan()
 	defer span.Finish()
 	span.SetLabel("method", "POST")
 	span.SetLabel("endpoint", "v2/checkout/confirm")
+	jsonContainer, _ := gabs.ParseJSON(createResponse.Bytes())
+	s.setPatchData(jsonContainer)
+	requestBody := bytes.NewBufferString(jsonContainer.String())
 
-	request, _ := http.NewRequest("POST", fmt.Sprintf("%s/v2/checkout/%s/confirm", s.ApiHost, checkoutID), nil)
+	request, _ := http.NewRequest("POST", fmt.Sprintf("%s/v2/checkout/%s/confirm", s.ApiHost, checkoutID), requestBody)
 	resp, err := s.httpClient.Do(request)
 	if err != nil || resp.StatusCode != http.StatusOK {
 		if err == nil {
